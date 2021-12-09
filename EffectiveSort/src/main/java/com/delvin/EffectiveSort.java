@@ -1,6 +1,7 @@
 package com.delvin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EffectiveSort {
@@ -104,12 +105,72 @@ public class EffectiveSort {
     }
 
     // HeapSort
-    // public void HeapSort(int[] arr) {
-    // HeapSort(arr, 0, arr.length - 1);
-    // }
+    public void HeapSort(int[] arr) {
+        int len = arr.length;
 
-    // public void HeapSort(int[] arr, int begin, int end) {
-    // }
+        for (int i = len / 2 - 1; i >= 0; i--)
+            heapify(arr, len, i);
+
+        for (int i = len - 1; i >= 0; i--) {
+            swap(arr, 0, i);
+            heapify(arr, i, 0);
+        }
+    }
+
+    public void HeapSort(int[] arr, int begin, int end) {
+        int[] subArray = Arrays.copyOfRange(arr, begin, end + 1);
+        HeapSort(subArray);
+        for (int i = begin; i < end; i++)
+            arr[i] = subArray[i - begin];
+    }
+
+    private void heapify(int[] arr, int len, int idx) {
+        int biggestIdx = idx;
+        int left = 2 * idx + 1;
+        int right = 2 * idx + 2;
+
+        if (left < len && arr[left] > arr[biggestIdx])
+            biggestIdx = left;
+        if (right < len && arr[right] > arr[biggestIdx])
+            biggestIdx = right;
+        if (biggestIdx != idx) {
+            swap(arr, idx, biggestIdx);
+            heapify(arr, len, biggestIdx);
+        }
+    }
+
+    public <T extends Comparable<T>> void HeapSort(T[] arr, int begin, int end) {
+        T[] subArray = Arrays.copyOfRange(arr, begin, end + 1);
+        HeapSort(subArray);
+        for (int i = begin; i < end; i++)
+            arr[i] = subArray[i - begin];
+    }
+
+    public <T extends Comparable<T>> void HeapSort(T[] arr) {
+        int len = arr.length;
+
+        for (int i = len / 2 - 1; i >= 0; i--)
+            heapify(arr, len, i);
+
+        for (int i = len - 1; i >= 0; i--) {
+            swap(arr, 0, i);
+            heapify(arr, i, 0);
+        }
+    }
+
+    public <T extends Comparable<T>> void heapify(T[] arr, int len, int idx) {
+        int biggestIdx = idx;
+        int left = 2 * idx + 1;
+        int right = 2 * idx + 2;
+        if (left < len && arr[left].compareTo(arr[biggestIdx]) > 0)
+            biggestIdx = left;
+        if (right < len && arr[right].compareTo(arr[biggestIdx]) > 0)
+            biggestIdx = right;
+        if (biggestIdx != idx) {
+            swap(arr, idx, biggestIdx);
+            heapify(arr, len, biggestIdx);
+        }
+    }
 
     // Merge Sort
     public void MergeSort(int[] arr) {
