@@ -1,5 +1,6 @@
 package com.delvin;
 
+import java.security.KeyException;
 import java.util.Iterator;
 
 /**
@@ -40,6 +41,10 @@ public class Map<K extends Comparable<K>, V> implements Iterable<Element<K, V>> 
     public Element<K, V> get(K key) {
         Node<K, V> node = tree.get(key);
         return node.data;
+    }
+
+    public void set(K key, V value) throws KeyException {
+        tree.set(key, value);
     }
 
     public V getValueByKey(K key) {

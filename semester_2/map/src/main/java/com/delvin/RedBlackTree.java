@@ -1,5 +1,6 @@
 package com.delvin;
 
+import java.security.KeyException;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Stack;
@@ -103,6 +104,26 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Iterable<Elemen
         }
 
         return null;
+    }
+
+    /**
+     * Update value in tree by key
+     * @param key
+     * @param value
+     * @throws KeyException
+     */
+    public void set(K key, V value) throws KeyException{
+        Node<K, V> node = root;
+        while (node != null) {
+            if (comparator.compare(key, node.data.key) == 0) {
+                node.data.value = value;
+                break;
+            } else if (comparator.compare(key, node.data.key) < 0)
+                node = node.leftChild;
+            else
+                node = node.rightChild;
+        }
+        throw new KeyException("Key not found in tree");
     }
 
     private void rotateRight(Node<K, V> node) {

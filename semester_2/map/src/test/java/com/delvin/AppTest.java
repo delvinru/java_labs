@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import java.util.List;
+import java.security.KeyException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -49,5 +50,30 @@ public class AppTest {
         for (Element<Integer, String> element : map) {
             System.out.println(element);
         }
+    }
+
+    @Test(expected = KeyException.class)
+    public void setByKey_1() throws KeyException {
+        List<Element<Integer, String>> list = new ArrayList<>();
+        for (int i = 0; i < 100; i++)
+            list.add(new Element<Integer, String>(i, UUID.randomUUID().toString()));
+
+        Map<Integer, String> map = new Map<>();
+        for (Element<Integer, String> el : list)
+            map.push(el);
+
+        map.set(-1, "123");
+    }
+
+    @Test(expected = KeyException.class)
+    public void setByKey_2() throws KeyException {
+        Map<Integer, String> map = new Map<>();
+        map.push(10, "test_1");
+        map.push(20, "test_1");
+        map.push(30, "test_1");
+        map.push(40, "test_1");
+
+        map.set(30, "123");
+        assertEquals(new Element<>(30, "123"), map.get(30));
     }
 }
