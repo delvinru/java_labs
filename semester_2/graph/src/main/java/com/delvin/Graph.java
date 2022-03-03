@@ -111,6 +111,7 @@ public class Graph<T> {
 
     /**
      * Return adjustmentMatrix for graph
+     * 
      * @return {@code int[][] matrix} - adjustment matrix for graph
      */
     public int[][] getAdjustmentMatrix() {
@@ -126,6 +127,31 @@ public class Graph<T> {
         }
 
         return adjustmentMatrix;
+    }
+
+    /**
+     * Returns all vertexs connected to a given vertex
+     * 
+     * @param vertex
+     * @return set of vertexs
+     * @throws GraphException
+     */
+    public Set<Vertex<T>> getConnections(T vertex) throws GraphException {
+        if (vertex == null)
+            throw new GraphException("Vertex can't be null");
+        if (!graph.containsKey(vertex))
+            throw new GraphException("Vertex not in graph");
+
+        return graph.get(vertex);
+    }
+
+    /**
+     * Return count of vertex in graph
+     * 
+     * @return count of vertex
+     */
+    public int size() {
+        return graph.size();
     }
 
     @Override
