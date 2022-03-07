@@ -1,5 +1,8 @@
 package com.delvin;
 
+/**
+ * Класс, описывающие элемент, который хранит пару ключ-значение.
+ */
 public class Element<K extends Comparable<K>, V> implements Comparable<Element<? extends Comparable<?>, ?>> {
     public K key = null;
     public V value = null;

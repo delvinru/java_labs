@@ -1,7 +1,5 @@
 package com.delvin;
 
-import java.util.Arrays;
-
 /**
  * 1. Для поиска ключа в структуре использовать двоичный поиск:
  * {@link #searchInsertPosition}
@@ -50,6 +48,11 @@ public final class Node<T extends Element<? extends Comparable<?>, ?>> {
             return mid + 1;
     }
 
+    /**
+     * Search new position for insert in sorted array
+     * 
+     * @param element
+     */
     public void insertKey(T element) {
         int i = searchInsertPosition(element);
         for (int j = keysCount - 1; j >= i; j--)

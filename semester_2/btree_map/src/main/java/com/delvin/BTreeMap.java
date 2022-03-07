@@ -1,17 +1,18 @@
 package com.delvin;
 
 import java.security.KeyException;
+import java.util.Iterator;
 
 /**
- * 1. Конструктор: <br>
- * 2. Конструктор копирования: <br>
- * 3. Проверка на пустоту: <br>
- * 4. Удаление всех элементов: <br>
- * 5. Добавление пары ключ-значение: <br>
- * 6. Получить значение по ключу: <br>
- * 7. Поиск по ключу: <br>
+ * 1. Конструктор: {@link #BTreeMap} <br>
+ * 2. Конструктор копирования: {@link #BTreeMap(BTreeMap<K, V> map)}<br>
+ * 3. Проверка на пустоту: {@link #empty} <br>
+ * 4. Удаление всех элементов: {@link #clear} <br>
+ * 5. Добавление пары ключ-значение: {@link #put} <br>
+ * 6. Получить значение по ключу: {@link #get} <br>
+ * 7. Поиск по ключу: {@link #search} <br>
  */
-public class BTreeMap<K extends Comparable<K>, V> implements MapInterface<K, V> {
+public class BTreeMap<K extends Comparable<K>, V> implements MapInterface<K, V>, Iterable<Element<K, V>> {
     private BTree<Element<K, V>> tree = null;
 
     /**
@@ -27,6 +28,10 @@ public class BTreeMap<K extends Comparable<K>, V> implements MapInterface<K, V> 
      */
     public BTreeMap(int t) {
         this.tree = new BTree<>(t);
+    }
+
+    public BTreeMap(BTreeMap<K, V> map) {
+        this.tree = new BTree<>(map.tree);
     }
 
     @Override
@@ -64,5 +69,10 @@ public class BTreeMap<K extends Comparable<K>, V> implements MapInterface<K, V> 
         if (tree.get(new Element<K, V>(key, value)) == null)
             throw new KeyException("Key not found in tree");
         tree.set(new Element<K, V>(key, value));
+    }
+
+    @Override
+    public Iterator<Element<K, V>> iterator() {
+        return tree.iterator();
     }
 }

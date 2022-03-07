@@ -81,7 +81,8 @@ public class GraphAlgorithmsA {
      * @param <T>
      * @param graph
      * @param fromVertex
-     * @return
+     * @return {@code int[] distances} - array with distances from current vertex to
+     *         another
      */
     public static <T> int[] dijkstra(Graph<T> graph, int fromVertex) {
         final int INF = Integer.MAX_VALUE;
@@ -94,7 +95,7 @@ public class GraphAlgorithmsA {
         // Correct values for algorithm
         for (int i = 0; i < matrix.length; i++)
             for (int j = 0; j < matrix[0].length; j++)
-                if (matrix[i][j] == 0)
+                if (matrix[i][j] == 0 && i != j)
                     matrix[i][j] = INF;
 
         Arrays.fill(dist, INF);
@@ -116,16 +117,41 @@ public class GraphAlgorithmsA {
         return dist;
     }
 
-    public static <T> void kruskalAlgoritm() {
+    public static <T> void kruskal() {
         return;
     }
 
-    public static <T> void primAlgorithm() {
+    public static <T> void prim() {
         return;
     }
 
-    public static <T> void floydWarshallAlgorithm() {
-        return;
-    }
+    /**
+     * Find shortes way between all pairs
+     * 
+     * @param <T>
+     * @param graph - graph for work
+     * @return - {@code int[][]} -
+     */
+    public static <T> int[][] floydWarshall(Graph<T> graph) {
+        final int INF = Integer.MAX_VALUE / 2;
+        int vertexNumber = graph.size();
+        int[][] matrix = graph.getAdjustmentMatrix();
 
+        // Correct values for algorithm
+        for (int i = 0; i < matrix.length; i++)
+            for (int j = 0; j < matrix[i].length; j++)
+                if (matrix[i][j] == 0 && i != j)
+                    matrix[i][j] = INF;
+
+        int[][] dist = new int[vertexNumber][vertexNumber];
+        for (int i = 0; i < vertexNumber; i++)
+            System.arraycopy(matrix[i], 0, dist[i], 0, vertexNumber);
+
+        for (int k = 0; k < vertexNumber; k++)
+            for (int i = 0; i < vertexNumber; i++)
+                for (int j = 0; j < vertexNumber; j++)
+                    dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
+
+        return dist;
+    }
 }

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.security.KeyException;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -57,5 +57,18 @@ public class AppTest {
         String test = "My super test string that definetly not UUID";
         map.set(555, test);
         assertEquals(test, map.get(555));
+    }
+
+    @Test
+    public void testIterator() {
+        int n = 100;
+        BTreeMap<Integer, String> map = new BTreeMap<>(3);
+        for (int i = 0; i < n; i++)
+            map.put(i, UUID.randomUUID().toString());
+
+        HashSet<Element<Integer, String>> set = new HashSet<>();
+        for (Element<Integer, String> element : map)
+            set.add(element);
+        assertEquals(n, set.size());
     }
 }

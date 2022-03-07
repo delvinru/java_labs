@@ -1,7 +1,18 @@
 package com.delvin;
 
-public class BTree<T extends Element<? extends Comparable<?>, ?>> {
-    private int t = 2; // default degree based on wikipedia
+import java.util.Iterator;
+import java.util.Stack;
+
+/**
+ * 1. Конструктор: {@link #BTree} <br>
+ * 2. Конструктор копирования: {@link #BTree(BTree<T> tree)} <br>
+ * 3. Проверка на пустоту: {@link #empty} <br>
+ * 4. Удаление всех элементов: {@link #clear} <br>
+ * 5. Добавление пары ключ-значение: {@link #set} <br>
+ * 6. Получение значения по ключу: {@link #get} <br>
+ */
+public class BTree<T extends Element<? extends Comparable<?>, ?>> implements Iterable<T> {
+    private int t = 50; // default degree based on wikipedia
     private Node<T> root = null;
 
     public BTree() {
@@ -9,6 +20,17 @@ public class BTree<T extends Element<? extends Comparable<?>, ?>> {
 
     public BTree(int t) {
         this.t = t;
+    }
+
+    /**
+     * Iterate over old tree and insert in new tree
+     * 
+     * @param tree
+     */
+    public BTree(BTree<T> tree) {
+        this.t = tree.getTreeDegree();
+        for (T element : tree)
+            insert(element);
     }
 
     public void clear() {
@@ -40,11 +62,11 @@ public class BTree<T extends Element<? extends Comparable<?>, ?>> {
             return this.getNode(node.childs[i], element);
     }
 
-    public void set(T element){
+    public void set(T element) {
         setNode(root, element);
     }
 
-    private void setNode(Node<T> node, T element){
+    private void setNode(Node<T> node, T element) {
         if (node == null)
             return;
         int i = 0;
@@ -117,6 +139,43 @@ public class BTree<T extends Element<? extends Comparable<?>, ?>> {
                     i++;
             }
             insert(node.childs[i], element);
+        }
+    }
+
+    public int getTreeDegree() {
+        return this.t;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new BTreeIterator(root);
+    }
+
+    private class BTreeIterator implements Iterator<T> {
+        Stack<T> stack;
+
+        BTreeIterator(Node<T> root) {
+            stack = new Stack<T>();
+            explore(root);
+        }
+
+        private void explore(Node<T> node) {
+            for (int i = 0; i < 2 * t - 1; i++)
+                if (node != null && node.keys[i] != null)
+                    stack.push(node.keys[i]);
+            for (int i = 0; i < 2 * t; i++)
+                if (node != null && node.childs[i] != null)
+                    explore(node.childs[i]);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.empty();
+        }
+
+        @Override
+        public T next() {
+            return stack.pop();
         }
     }
 }
