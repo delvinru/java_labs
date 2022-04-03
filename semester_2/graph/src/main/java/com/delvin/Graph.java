@@ -2,13 +2,26 @@ package com.delvin;
 
 import java.util.*;
 
+/**
+ * Implementation of graph based on HashMap: <br>
+ * Key - vertex of graph <br>
+ * Set - all connections from this vertex to other vertex <br>
+ */
 public class Graph<T> {
     HashMap<T, Set<Vertex<T>>> graph;
 
+    /**
+     * Initialize empty graph
+     */
     public Graph() {
         graph = new HashMap<T, Set<Vertex<T>>>();
     }
 
+    /**
+     * Initialize graph with weights based on adjustmentMatrix
+     * @param adjustmentMatrix
+     * @throws GraphException
+     */
     public Graph(int[][] adjustmentMatrix) throws GraphException {
         this();
         convertFromAdjustmentMatrix(adjustmentMatrix);
@@ -38,6 +51,10 @@ public class Graph<T> {
     public void addConnection(T fromVertex, T toVertex) throws GraphException {
         if (fromVertex == null || toVertex == null)
             throw new GraphException("Vertex can't be null");
+        if (!graph.containsKey(fromVertex))
+            this.addVertex(fromVertex);
+        if (!graph.containsKey(toVertex))
+            this.addVertex(toVertex);
         graph.get(fromVertex).add(new Vertex<T>(toVertex));
     }
 
@@ -52,6 +69,10 @@ public class Graph<T> {
     public void addConnection(T fromVertex, T toVertex, int weight) throws GraphException {
         if (fromVertex == null || toVertex == null)
             throw new GraphException("Vertex can't be null");
+        if (!graph.containsKey(fromVertex))
+            this.addVertex(fromVertex);
+        if (!graph.containsKey(toVertex))
+            this.addVertex(toVertex);
         graph.get(fromVertex).add(new Vertex<T>(toVertex, weight));
     }
 
@@ -91,6 +112,11 @@ public class Graph<T> {
         graph.get(fromVertex).removeIf(key -> key.getValue() == toVertex);
     }
 
+    /**
+     * Inititalize graph with adjustment matrix 
+     * @param adjustmentMatrix
+     * @throws GraphException
+     */
     @SuppressWarnings("unchecked")
     private void convertFromAdjustmentMatrix(int[][] adjustmentMatrix) throws GraphException {
         int rows = adjustmentMatrix.length;
@@ -130,6 +156,32 @@ public class Graph<T> {
     }
 
     /**
+     * @return Return all vertexs in graph
+     * @throws GraphException
+     */
+    public Set<T> getVertexs() throws GraphException {
+        if (graph.isEmpty())
+            throw new GraphException("Graph haven't vertexes!");
+        return graph.keySet();
+    }
+
+    /**
+     * Help function for kruskal algo
+     * 
+     * @return list of edges
+     * @throws GraphException
+     */
+    public List<Edge<T>> getEdges() throws GraphException {
+        if (graph == null || graph.isEmpty())
+            throw new GraphException("In empty graph can't be edges");
+        List<Edge<T>> edges = new ArrayList<>();
+        for (T from : this.getVertexs())
+            for (Vertex<T> to : this.getConnections(from))
+                edges.add(new Edge<T>(from, to.getValue(), to.getWeight()));
+        return edges;
+    }
+
+    /**
      * Returns all vertexs connected to a given vertex
      * 
      * @param vertex
@@ -140,9 +192,25 @@ public class Graph<T> {
         if (vertex == null)
             throw new GraphException("Vertex can't be null");
         if (!graph.containsKey(vertex))
-            throw new GraphException("Vertex not in graph");
-
+            throw new GraphException("Vertex don't exists in graph");
         return graph.get(vertex);
+    }
+
+    /**
+     * @return weight of graph
+     * @throws GraphException
+     */
+    public int getGraphWeight() throws GraphException {
+        if (graph == null || graph.isEmpty())
+            throw new GraphException("Empty graph hasn't edges!");
+
+        int result = 0;
+        for (T vertex : this.getVertexs())
+            for (Vertex<T> connection : this.getConnections(vertex)){
+                // System.out.println(vertex + ":" + connection.getValue() + " : " + connection.getWeight());
+                result += connection.getWeight();
+            }
+        return result;
     }
 
     /**
@@ -154,6 +222,9 @@ public class Graph<T> {
         return graph.size();
     }
 
+    /**
+     * Nice print for graph
+     */
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();

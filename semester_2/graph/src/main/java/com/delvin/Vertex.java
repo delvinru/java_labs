@@ -1,5 +1,8 @@
 package com.delvin;
 
+/**
+ * Helper class for store information about Vertex
+ */
 public class Vertex<T> {
     private T value;
     private Integer weight = null;

@@ -2,6 +2,15 @@ package com.delvin;
 
 import java.util.*;
 
+/**
+ * Implemented algos: <br>
+ * 1. dfs {@link #dfs(Graph, Object, Object)} <br>
+ * 2. bfs {@link #bfs(Graph, Object, Object)} <br>
+ * 3. dijkstra {@link #dijkstra(Graph, int)} <br>
+ * 4. kruskal {@link #kruskal(Graph)} <br>
+ * 5. prim {@link #prim(Graph)} <br>
+ * 6. floyd-warshall {@link #floydWarshall(Graph)} <br>
+ */
 public class GraphAlgorithmsA {
     /**
      * Check if exist path from point A to point B with dfs
@@ -117,12 +126,138 @@ public class GraphAlgorithmsA {
         return dist;
     }
 
-    public static <T> void kruskal() {
-        return;
+    /**
+     * Find minimum spanning tree wtih Kruskal algorithm
+     * 
+     * @param <T>   - type for graph
+     * @param graph - graph
+     * @return - new graph contains only MST
+     * @throws GraphException
+     */
+    public static <T> Graph<T> kruskal(Graph<T> graph) throws GraphException {
+        List<Edge<T>> edges = graph.getEdges();
+        // Sort edgest by weight
+        Collections.sort(edges, Comparator.comparingInt(e -> e.weight));
+        // Create new MST graph
+        Graph<T> MST = new Graph<>();
+
+        int vertexsCount = graph.getVertexs().size();
+        int[] parents = new int[vertexsCount + 1];
+        int[] size = new int[vertexsCount + 1];
+        for (int i = 0; i < vertexsCount; i++) {
+            parents[i] = i;
+            size[i] = 1;
+        }
+
+        // Enumerate all edges
+        for (Edge<T> edge : edges) {
+            // If adding an edge results in a cycle, skip this edge
+            if (isCyclic((Integer) edge.src, (Integer) edge.dest, parents))
+                continue;
+
+            union(findParent((Integer) edge.src, parents), findParent((Integer) edge.dest, parents), parents, size);
+            MST.addConnection(edge.src, edge.dest, edge.weight);
+        }
+
+        return MST;
     }
 
-    public static <T> void prim() {
-        return;
+    /**
+     * Helper function for Kruskal algorithm
+     * 
+     * @param <T>
+     * @param src
+     * @param dest
+     * @param parents
+     * @return
+     */
+    private static <T> boolean isCyclic(Integer src, Integer dest, int[] parents) {
+        return findParent(src, parents) == findParent(dest, parents);
+    }
+
+    /**
+     * Helper function for Kruskal algorithm
+     * 
+     * @param <T>
+     * @param vertex
+     * @param parents
+     * @return
+     */
+    private static <T> Integer findParent(Integer vertex, int[] parents) {
+        if (parents[vertex] == vertex)
+            return vertex;
+        else {
+            parents[vertex] = findParent(parents[vertex], parents);
+            return parents[vertex];
+        }
+    }
+
+    /**
+     * Helper function for Kruskal algorithm
+     * 
+     * @param src
+     * @param dest
+     * @param parents
+     * @param size
+     */
+    private static void union(Integer src, Integer dest, int[] parents, int[] size) {
+        src = findParent(src, parents);
+        dest = findParent(dest, parents);
+        if (size[src] > size[dest]) {
+            parents[dest] = src;
+            size[src] += size[dest];
+        } else {
+            parents[src] = dest;
+            size[dest] += size[src];
+        }
+    }
+
+    /**
+     * Find minimum spanning tree wtih Prim's algorithm
+     * P.S. simple algo with adjustment matrix
+     * 
+     * @param <T>   - type for graph
+     * @param graph - graph
+     * @return - new graph contains only MST
+     * @throws GraphException
+     */
+    public static <T> Graph<Integer> prim(Graph<T> graph) throws GraphException {
+        // Init new graph for store MST
+        Graph<Integer> MST = new Graph<>();
+
+        int numberOfVertex = graph.getVertexs().size();
+        boolean[] selected = new boolean[numberOfVertex];
+        Arrays.fill(selected, false);
+
+        // By default start with first point
+        selected[0] = true;
+
+        // Generate adjustment matrix from graph
+        int[][] matrix = graph.getAdjustmentMatrix();
+        final int INF = Integer.MAX_VALUE / 2;
+
+        // Correct values for algorithm
+        for (int i = 0; i < matrix.length; i++)
+            for (int j = 0; j < matrix[0].length; j++)
+                if (matrix[i][j] == 0)
+                    matrix[i][j] = INF;
+
+        for (int edgeCount = 0; edgeCount < numberOfVertex - 1; edgeCount++) {
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < numberOfVertex; i++) {
+                for (int j = 0; j < numberOfVertex; j++) {
+                    if (selected[i] && !selected[j] && matrix[i][j] < matrix[x][y]) {
+                        x = i;
+                        y = j;
+                    }
+                }
+            }
+            MST.addConnection(x + 1, y + 1, matrix[x][y]);
+            selected[y] = true;
+        }
+        return MST;
+
     }
 
     /**
