@@ -17,4 +17,20 @@ public class Edge<T> {
     public String toString() {
         return "Edge { src=" + this.src + ", dest=" + this.dest + ", weight=" + this.weight + " }";
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(Object objEdge) {
+        if (objEdge == this)
+            return true;
+
+        if (objEdge == null)
+            return false;
+
+        Edge<T> edge = (Edge<T>) objEdge;
+        if (edge.src == this.src && edge.dest == this.dest)
+            return true;
+
+        return false;
+    }
 }

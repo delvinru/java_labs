@@ -48,6 +48,32 @@ public class GraphAlgorithmsA {
         return false;
     }
 
+    public static <T> List<T> dfs(Graph<T> graph, T fromVertex) throws GraphException {
+        if (graph == null)
+            throw new GraphException("Graph can't be null");
+
+        if (!graph.containVertex(fromVertex))
+            throw new GraphException("Vertex don't exist in graph");
+        Deque<T> stack = new ArrayDeque<>();
+        List<T> visited = new ArrayList<>();
+
+        stack.push(fromVertex);
+        while (!stack.isEmpty()) {
+            T vertex = stack.pop();
+            if (!visited.contains(vertex)) {
+                visited.add(vertex);
+
+                List<T> neighbors = graph.getOutVertexs(vertex);
+                for (T neighbor : neighbors) {
+                    if (!visited.contains(neighbor)) {
+                        stack.add(neighbor);
+                    }
+                }
+            }
+        }
+        return visited;
+    }
+
     /**
      * Check if exist path from point A to point B with bfs
      * 

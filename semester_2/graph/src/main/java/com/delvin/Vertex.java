@@ -32,6 +32,8 @@ public class Vertex<T> {
     }
 
     public Integer getWeight() {
+        if (weight == null)
+            return 0;
         return weight;
     }
 

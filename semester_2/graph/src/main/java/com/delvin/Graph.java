@@ -17,8 +17,18 @@ public class Graph<T> {
         graph = new HashMap<T, Set<Vertex<T>>>();
     }
 
+    public Graph(Graph<T> graph) throws GraphException {
+        for (T vertex : graph.getVertexs()) {
+            addVertex(vertex);
+            for (Vertex<T> vertex2 : graph.getConnections(vertex)) {
+                addConnection(vertex, vertex2.getValue());
+            }
+        }
+    }
+
     /**
      * Initialize graph with weights based on adjustmentMatrix
+     * 
      * @param adjustmentMatrix
      * @throws GraphException
      */
@@ -113,7 +123,8 @@ public class Graph<T> {
     }
 
     /**
-     * Inititalize graph with adjustment matrix 
+     * Inititalize graph with adjustment matrix
+     * 
      * @param adjustmentMatrix
      * @throws GraphException
      */
@@ -206,8 +217,9 @@ public class Graph<T> {
 
         int result = 0;
         for (T vertex : this.getVertexs())
-            for (Vertex<T> connection : this.getConnections(vertex)){
-                // System.out.println(vertex + ":" + connection.getValue() + " : " + connection.getWeight());
+            for (Vertex<T> connection : this.getConnections(vertex)) {
+                // System.out.println(vertex + ":" + connection.getValue() + " : " +
+                // connection.getWeight());
                 result += connection.getWeight();
             }
         return result;
@@ -235,5 +247,51 @@ public class Graph<T> {
             string.append("};\n");
         }
         return string.toString();
+    }
+
+    public List<T> getOutVertexs(T vertex) throws GraphException {
+        if (!graph.containsKey(vertex))
+            throw new GraphException("Vertex don't exists in graph");
+
+        List<T> result = new ArrayList<>();
+        for (Edge<T> edge : this.getEdges())
+            if (edge.src.equals(vertex))
+                result.add(edge.dest);
+        return result;
+    }
+
+    public List<T> getInVertexs(T vertex) throws GraphException {
+        if (!graph.containsKey(vertex))
+            throw new GraphException("Vertex don't exists in graph");
+
+        List<T> result = new ArrayList<>();
+        for (Edge<T> edge : this.getEdges())
+            if (edge.dest == vertex)
+                result.add(edge.src);
+        return result;
+    }
+
+    public Edge<T> getEdge(T src, T dest) throws GraphException {
+        if (!(graph.containsKey(src) || graph.containsKey(dest)))
+            throw new GraphException("Vertex not in graph");
+
+        for (Edge<T> edge : this.getEdges())
+            if (edge.src.equals(src) && edge.dest.equals(dest))
+                return edge;
+
+        return null;
+    }
+
+    public Graph<T> getTransposedGraph() throws GraphException {
+        Graph<T> graph = new Graph<>();
+
+        for (T vertex : this.getVertexs())
+            graph.addVertex(vertex);
+
+        for (Edge<T> edge : this.getEdges())
+            graph.addConnection(edge.dest, edge.src, edge.weight);
+
+        return graph;
+
     }
 }
