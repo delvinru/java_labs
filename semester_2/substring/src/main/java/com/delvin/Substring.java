@@ -3,6 +3,12 @@ package com.delvin;
 import java.util.*;
 import java.util.function.ToIntFunction;
 
+/**
+ * 1. Boyer-Moore: {@link #boyerMoore(String, String)} <br>
+ * 2. Rabin-Karp: {@link #rabinKarp(String, String, ToIntFunction)} <br>
+ * 3. Knuth-Morris-Prat: {@link #knuthMorrisPratt(String, String)} <br>
+ * 4. FSM: {@link #FSM(String, String)}
+ */
 public class Substring {
     /**
      * Find substring with Boyer-Moore algorithm
